@@ -5,22 +5,27 @@ require 'net/https'
 require 'optparse'
 require 'uri'
 
-class ConfigurationParser
-  attr_accessor :apikey, :subdomain, :offset, :limit
+class Options
+  attr_accessor :apikey, :subaccount, :offset, :limit
 
   def initialize(options)
     @opts = OptionParser.new do |parser|
-      parser.on('-k <apikey>',    '--apikey',     'Your Unbounce API key.')         { |opt| @apikey     = opt }
-      parser.on('-s <subdomain>', '--subdomain',  'Your Subdomain ID.')             { |opt| @subdomain  = opt }
-      parser.on('-o <offset>',    '--offset',     'First record index.')            { |opt| @offset     = opt }
-      parser.on('-l <limit>',     '--limit',      'Number of records to retrieve.') { |opt| @limit      = opt }
+      parser.on('-k <apikey>',      '--apikey',     'Your Unbounce API key.')         { |opt| @apikey       = opt }
+      parser.on('-s <subaccount>',  '--subaccount', 'Your subaccount ID.')            { |opt| @subaccount   = opt }
+      parser.on('-o <offset>',      '--offset',     'First record index.')            { |opt| @offset       = opt }
+      parser.on('-l <limit>',       '--limit',      'Number of records to retrieve.') { |opt| @limit        = opt }
     end
 
     @opts.parse!(options)
-
-    @offset = 0   if @offset.nil?
-    @limit  = 50  if @limit.nil?
+    set_defaults
   end
+
+  private
+
+    def set_defaults
+      @offset = 0   if @offset.nil?
+      @limit  = 50  if @limit.nil?
+    end
 end
 
 
@@ -28,10 +33,10 @@ class ApiInterface
   extend Forwardable
 
   def initialize(argv)
-    @config = ConfigurationParser.new(argv)
+    @opts = Options.new(argv)
   end
 
-  def_delegators :@config, :apikey, :subdomain, :offset, :limit
+  def_delegators :@opts, :apikey, :subaccount, :offset, :limit
 
   def get(uri)
     http = Net::HTTP.new(uri.host, uri.port)
@@ -48,6 +53,10 @@ class ApiInterface
 end
 
 
+# UnbouncePage
+#
+# Calls the API and extracts detailed data about a specific page.
+#
 class UnbouncePage
 
   def initialize(api_interface, page_id)
@@ -109,13 +118,13 @@ class UnbouncePages
   end
 
   def file_name
-    "#{DateTime.now.strftime("%F")}-#{@api_interface.subdomain}-page-export.csv"
+    "#{DateTime.now.strftime("%F")}-#{@api_interface.subaccount}-page-export.csv"
   end
 
   private
 
     def api_uri
-      URI.parse("https://api.unbounce.com/sub_accounts/#{@api_interface.subdomain}/pages?offset=#{@api_interface.offset}&limit=#{@api_interface.limit}")
+      URI.parse("https://api.unbounce.com/sub_accounts/#{@api_interface.subaccount}/pages?offset=#{@api_interface.offset}&limit=#{@api_interface.limit}")
     end
 
     def build_pages(data)
@@ -126,27 +135,28 @@ end
 
 # ------------------------------ Main ------------------------------
 
-# Uses an Unbounce API key and a Subdomain ID to extract data about all the
-# pages in that subdomain.
+# Uses an Unbounce API key and a subaccount ID to extract data about all the
+# pages in that subaccount.
 #
 # Parameters
 #
 #   Required:
 #     --apikey  Your Unbounce API key.
-#     --subdomain   The numeric ID of the subdomain that has your pages.
+#     --subaccount   The numeric ID of the subaccount that has your pages.
 #
 #   Optional:
 #     --offset      The first page to start from. Defaults to 0
 #     --limit       The number of pages to retrieve. Defaults to 50
 #
-# Example:
+# Examples:
 #
-#   ruby pages2csv.rb --apikey 07b491ee5a6147d92b143345a48b848f --subdomain 47742 --offset 50 --limit 100
+#   ruby pages2csv.rb --apikey 07b491ee5a6147d92b143345a48b848f --subaccount 47742 --offset 50 --limit 100
+#   ruby pages2csv.rb -k 07b491ee5a6147d92b143345a48b848f -s 47742
 #
 if __FILE__ == $0
   ai = ApiInterface.new(ARGV)
   up = UnbouncePages.new(ai)
   up.fetch.as_csv
 
-  puts "Wrote #{up.file_name}/"
+  puts "Wrote #{up.file_name}."
 end
