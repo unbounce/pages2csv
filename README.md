@@ -8,7 +8,7 @@ holding your pages.
 
 [Unbounce API Access](https://api.unbounce.com/doc/requesting_access)
 
-## Usage
+## Simple Usage
 
 Via the command line:
 
@@ -29,3 +29,9 @@ Columns in the CSV file are:
     url         - the link to the page
     visitors    - the number of unique visitors to the page
     conversions - the number of conversions from the page
+
+Note that the script supports other command line arguments. Type:
+
+    ruby pages2csv.rb -h
+    
+to view other options.
