@@ -33,5 +33,16 @@ Columns in the CSV file are:
 Note that the script supports other command line arguments. Type:
 
     ruby pages2csv.rb -h
-    
+
 to view other options.
+
+
+# api_key_check.rb
+
+A utility useful for checking whether or not an API key is working.
+Returns the number of pages in a given sub-account if the key is good.
+
+## Usage
+
+    ruby api_key_check.rb -k [the Unbounce API key] -s [the subaccount id]
+
