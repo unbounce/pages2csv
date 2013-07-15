@@ -19,8 +19,8 @@ require_relative './models/unbounce_pages'
 # Parameters
 #
 #   Required:
-#     --apikey  Your Unbounce API key.
-#     --subaccount   The numeric ID of the subaccount that has your pages.
+#     --apikey      Your Unbounce API key.
+#     --subaccount  The numeric ID of the subaccount that has your pages.
 #
 #   Optional:
 #     --offset      The first page to start from. Defaults to 0
