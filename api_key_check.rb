@@ -5,6 +5,7 @@ require 'uri'
 
 require_relative './models/options'
 require_relative './models/api_interface'
+require_relative './models/unbounce_page'
 require_relative './models/unbounce_pages'
 
 
