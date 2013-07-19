@@ -22,8 +22,8 @@ require_relative './models/unbounce_pages'
 #
 # Examples:
 #
-#   ruby pages2csv.rb --apikey 07b491ee5a6147d92b143345a48b848f --subaccount 47742
-#   ruby pages2csv.rb -k 07b491ee5a6147d92b143345a48b848f -s 47742
+#   ruby api_key_check.rb --apikey 07b491ee5a6147d92b143345a48b848f --subaccount 47742
+#   ruby api_key_check.rb -k 07b491ee5a6147d92b143345a48b848f -s 47742
 #
 if __FILE__ == $0
   ai = ApiInterface.new(ARGV)

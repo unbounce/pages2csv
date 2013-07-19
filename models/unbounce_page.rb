@@ -18,8 +18,8 @@ class UnbouncePage
 
   def stats
     return if @data.empty?
-
-    curr = tests['current']
+    
+    curr = @data['test']['current']
     @stats = { id: @page_id, name: name, url: url, visitors: curr['visitors'], conversions: curr['conversions'] }
   end
 
